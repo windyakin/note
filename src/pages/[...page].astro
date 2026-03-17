@@ -41,9 +41,11 @@ function formatDate(dateStr: string): string {
               <div class="post-entry-meta">
                 <time>{formatDate(post.meta.lastEditedAt)}</time>
               </div>
-              <h1 class="post-entry-title">
-                <a href={`/posts/${post.meta.id}`}>{post.meta.title}</a>
-              </h1>
+              {post.meta.title && (
+                <h1 class="post-entry-title">
+                  <a href={`/posts/${post.meta.id}/`}>{post.meta.title}</a>
+                </h1>
+              )}
             </header>
             <div class="post-entry-body">
               <NotionRenderer blocks={displayBlocks} client:load />
@@ -54,7 +56,7 @@ function formatDate(dateStr: string): string {
               </div>
             )}
             <footer class="post-entry-footer text-body-secondary d-flex gap-2 justify-content-end">
-              <a href={`/posts/${post.meta.id}`} aria-label={`記事「${post.meta.title}」を読む`}>
+              <a href={`/posts/${post.meta.id}/`} aria-label={post.meta.title ? `記事「${post.meta.title}」を読む` : "記事を読む"}>
                 Permalink
               </a>
             </footer>
