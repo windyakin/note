@@ -33,10 +33,10 @@ function formatDate(dateStr: string): string {
 <Base title={meta.title}>
   <article>
     <header class="post-header">
-      <h1 class="post-title">{meta.title}</h1>
       <div class="post-meta">
         <time>{formatDate(meta.lastEditedAt)}</time>
       </div>
+      <h1 class="post-title">{meta.title}</h1>
     </header>
 
     <NotionRenderer blocks={blocks} client:load />
