@@ -172,11 +172,34 @@ export function getBlocksBeforeDivider(blocks: Block[]): Block[] {
 // Property Extractors
 // ---------------------------------------------------------------------------
 
+/**
+ * ブロック配列からプレーンテキストを抽出し、指定文字数で切り詰める。
+ */
+export function extractTextFromBlocks(blocks: Block[], maxLength = 200): string {
+  const textParts: string[] = [];
+
+  for (const block of blocks) {
+    const data = block[block.type as keyof typeof block] as
+      | { rich_text?: RichText[] }
+      | undefined;
+    if (data?.rich_text) {
+      const text = data.rich_text.map((t) => t.plain_text).join("");
+      if (text) textParts.push(text);
+    }
+    if (textParts.join(" ").length >= maxLength) break;
+  }
+
+  const joined = textParts.join(" ");
+  return joined.length > maxLength
+    ? joined.slice(0, maxLength) + "…"
+    : joined;
+}
+
 function extractTitle(prop: unknown): string {
-  if (!prop || typeof prop !== "object") return "Untitled";
+  if (!prop || typeof prop !== "object") return "";
   const p = prop as Record<string, unknown>;
   if (p.type === "title" && Array.isArray(p.title)) {
-    return (p.title as RichText[]).map((t) => t.plain_text).join("") || "Untitled";
+    return (p.title as RichText[]).map((t) => t.plain_text).join("");
   }
-  return "Untitled";
+  return "";
 }

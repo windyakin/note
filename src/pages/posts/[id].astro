@@ -1,7 +1,7 @@
 ---
 import Base from "@/layouts/Base.astro";
 import NotionRenderer from "@/components/NotionRenderer.vue";
-import { getPublishedPosts, getPageById } from "@/lib/notion";
+import { getPublishedPosts, getPageById, extractTextFromBlocks } from "@/lib/notion";
 import { enrichBlocksWithOgp } from "@/lib/enrichBlocks";
 
 export async function getStaticPaths() {
@@ -21,6 +21,9 @@ if (!data) {
 const { meta, blocks } = data;
 await enrichBlocksWithOgp(blocks);
 
+const description = extractTextFromBlocks(blocks);
+const ogTitle = meta.title || description;
+
 function formatDate(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString("ja-JP", {
     year: "numeric",
@@ -30,13 +33,13 @@ function formatDate(dateStr: string): string {
 }
 ---
 
-<Base title={meta.title}>
+<Base title={ogTitle} description={description} ogType="article" oEmbedUrl={`/oembed/${id}.json`}>
   <article>
     <header class="post-header">
       <div class="post-meta">
         <time>{formatDate(meta.lastEditedAt)}</time>
       </div>
-      <h1 class="post-title">{meta.title}</h1>
+      {meta.title && <h1 class="post-title">{meta.title}</h1>}
     </header>
 
     <NotionRenderer blocks={blocks} client:load />

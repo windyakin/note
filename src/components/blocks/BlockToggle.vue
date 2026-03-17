@@ -36,8 +36,9 @@ defineProps<{ block: Block }>();
 .nr-toggle-summary::before {
   content: "\25B6";
   display: inline-block;
-  font-size: 0.625rem;
-  margin-right: 0.5rem;
+  font-size: 0.85em;
+  margin-right: 0.4rem;
+  line-height: 0.8rem;
   transition: transform 0.15s;
 }
 .nr-toggle:is(details[open]) > .nr-toggle-summary::before {

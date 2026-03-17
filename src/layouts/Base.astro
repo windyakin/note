@@ -5,10 +5,14 @@ import "@/styles/global.css";
 interface Props {
   title: string;
   description?: string;
+  ogType?: string;
+  oEmbedUrl?: string;
 }
 
-const { title, description = "Notion CMS で管理する短文ブログ" } = Astro.props;
-const siteName = "My Blog";
+const { title, description = "note.windyakin.net", ogType = "website", oEmbedUrl } = Astro.props;
+const siteName = "note.windyakin.net";
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
+const ogTitle = title || siteName;
 ---
 
 <!doctype html>
@@ -17,16 +21,15 @@ const siteName = "My Blog";
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
-    <title>{title} | {siteName}</title>
+    <title>{title ? `${title} | ${siteName}` : siteName}</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-
-    <!-- Noto Sans JP (Google Fonts) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&display=swap"
-      rel="stylesheet"
-    />
+    <link rel="canonical" href={canonicalUrl} />
+    <meta property="og:title" content={ogTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content={siteName} />
+    {oEmbedUrl && <link rel="alternate" type="application/json+oembed" href={oEmbedUrl} title={ogTitle} />}
   </head>
   <body>
     <header class="navbar navbar-light bg-white border-bottom">
@@ -40,7 +43,7 @@ const siteName = "My Blog";
     </main>
 
     <footer class="border-top text-center py-3 text-body-secondary small">
-      <p class="mb-0">&copy; {new Date().getFullYear()} {siteName}. Powered by Notion &amp; Astro.</p>
+      <div class="mb-0">&copy; 2006 windyakin</div>
     </footer>
   </body>
 </html>
