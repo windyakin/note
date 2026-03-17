@@ -16,8 +16,8 @@ const ogp = props.block.ogp ?? null;
     target="_blank"
     rel="noopener noreferrer"
   >
-    <div class="row g-0 nr-bookmark-row flex-column-reverse flex-sm-row">
-      <div class="col-12 col-md-8">
+    <div class="row g-0 nr-bookmark-row" :class="ogp?.imageUrl ? 'flex-column-reverse flex-sm-row' : ''">
+      <div :class="ogp?.imageUrl ? 'col-12 col-sm-8' : 'col'">
         <div class="card-body d-flex flex-column h-100">
           <h6 class="card-title nr-bookmark-title mb-1">{{ ogp?.title ?? url }}</h6>
           <div v-if="ogp?.description" class="card-text nr-bookmark-desc text-body-secondary small mb-1">
@@ -43,7 +43,7 @@ const ogp = props.block.ogp ?? null;
           </div>
         </div>
       </div>
-      <div v-if="ogp?.imageUrl" class="col-12 col-md-4 nr-bookmark-cover rounded-end">
+      <div v-if="ogp?.imageUrl" class="col-12 col-sm-4 nr-bookmark-cover rounded-end">
         <img :src="ogp.imageUrl" class="nr-bookmark-cover-bg" aria-hidden="true" />
         <img
           :src="ogp.imageUrl"
@@ -52,7 +52,7 @@ const ogp = props.block.ogp ?? null;
           loading="lazy"
         />
       </div>
-      <div v-else class="col-12 col-md-4 d-flex align-items-center pe-3">
+      <div v-else class="col-auto d-flex align-items-center pe-3">
         <span class="text-body-secondary fs-5">&#x2197;</span>
       </div>
     </div>

@@ -3,3 +3,4 @@ dist
 .env
 .astro
 public/ogp/
+public/notion-images

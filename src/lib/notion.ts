@@ -17,7 +17,12 @@ const databaseId = import.meta.env.NOTION_DATABASE_ID;
 // Types (re-export + helpers)
 // ---------------------------------------------------------------------------
 
-export type Block = BlockObjectResponse & { children?: Block[]; ogp?: OgpMeta };
+export type Block = BlockObjectResponse & {
+  children?: Block[];
+  ogp?: OgpMeta;
+  /** ビルド時にダウンロードされたローカル画像パス */
+  localImageUrl?: string;
+};
 export type RichText = RichTextItemResponse;
 export type Page = PageObjectResponse;
 

@@ -1,48 +1,69 @@
 import type { Block } from "./notion";
-import { fetchOgpMeta, downloadOgpImage } from "./ogp";
+import { fetchOgpMeta, downloadOgpImage, downloadFavicon, downloadNotionImage } from "./ogp";
 
 const CONCURRENCY_LIMIT = 5;
 
+type EnrichTask = { type: "ogp"; block: Block; url: string }
+  | { type: "image"; block: Block; url: string };
+
 /**
- * bookmark / link_preview ブロックに OGP メタデータを付与する。
- * ブロック配列を in-place で変更して返す。
+ * ブロックツリーを走査し、以下を並列で実行する:
+ * - bookmark / link_preview: OGP メタデータ取得 + カバー画像 & favicon ダウンロード
+ * - image: 画像をローカルにダウンロード
  */
 export async function enrichBlocksWithOgp(blocks: Block[]): Promise<Block[]> {
-  const targets: { block: Block; url: string }[] = [];
-  collectOgpTargets(blocks, targets);
+  const tasks: EnrichTask[] = [];
+  collectTasks(blocks, tasks);
 
-  if (targets.length === 0) return blocks;
+  if (tasks.length === 0) return blocks;
 
-  await processWithConcurrency(targets, CONCURRENCY_LIMIT, async ({ block, url }) => {
-    const meta = await fetchOgpMeta(url);
-    if (!meta) return;
+  await processWithConcurrency(tasks, CONCURRENCY_LIMIT, async (task) => {
+    if (task.type === "ogp") {
+      const meta = await fetchOgpMeta(task.url);
+      if (!meta) return;
 
-    if (meta.imageUrl) {
-      const localPath = await downloadOgpImage(meta.imageUrl);
-      meta.imageUrl = localPath;
+      if (meta.imageUrl) {
+        meta.imageUrl = await downloadOgpImage(meta.imageUrl);
+      }
+      if (meta.faviconUrl) {
+        meta.faviconUrl = await downloadFavicon(meta.faviconUrl);
+      }
+
+      task.block.ogp = meta;
+    } else {
+      const localPath = await downloadNotionImage(task.url);
+      if (localPath) {
+        task.block.localImageUrl = localPath;
+      }
     }
-
-    block.ogp = meta;
   });
 
   return blocks;
 }
 
-function collectOgpTargets(
-  blocks: Block[],
-  targets: { block: Block; url: string }[],
-): void {
+function getMediaUrl(block: Block): string {
+  const data = (block as any)[block.type];
+  if (!data) return "";
+  if (data.type === "external") return data.external?.url ?? "";
+  if (data.type === "file") return data.file?.url ?? "";
+  return "";
+}
+
+function collectTasks(blocks: Block[], tasks: EnrichTask[]): void {
   for (const block of blocks) {
     if (block.type === "bookmark") {
       const url = (block as any).bookmark?.url;
-      if (url) targets.push({ block, url });
+      if (url) tasks.push({ type: "ogp", block, url });
     } else if (block.type === "link_preview") {
       const url = (block as any).link_preview?.url;
-      if (url) targets.push({ block, url });
+      if (url) tasks.push({ type: "ogp", block, url });
+    } else if (block.type === "image") {
+      const url = getMediaUrl(block);
+      if (url) tasks.push({ type: "image", block, url });
     }
 
     if (block.children) {
-      collectOgpTargets(block.children, targets);
+      collectTasks(block.children, tasks);
     }
   }
 }

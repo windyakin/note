@@ -9,7 +9,7 @@ defineProps<{ block: Block }>();
 <template>
   <figure class="nr-figure">
     <img
-      :src="getMediaUrl(block)"
+      :src="block.localImageUrl ?? getMediaUrl(block)"
       :alt="getCaption(block).map((t: any) => t.plain_text).join('') || 'image'"
       class="nr-image"
       loading="lazy"
