@@ -12,38 +12,22 @@ const checked: boolean = (props.block as any).to_do?.checked ?? false;
 </script>
 
 <template>
-  <div class="nr-todo">
-    <label class="nr-todo-label">
-      <input
-        type="checkbox"
-        :checked="checked"
-        disabled
-        class="nr-todo-checkbox"
-      />
-      <span :class="{ 'nr-todo-checked': checked }">
-        <RichText :texts="getRichText(block)" />
-      </span>
+  <div class="form-check">
+    <input
+      type="checkbox"
+      :checked="checked"
+      class="form-check-input"
+    />
+    <label :class="['form-check-label', { 'text-decoration-line-through text-body-secondary': checked }]">
+      <RichText :texts="getRichText(block)" />
     </label>
     <NotionRenderer v-if="block.children?.length" :blocks="block.children" />
   </div>
 </template>
 
 <style scoped>
-.nr-todo {
-  margin: 2px 0;
-}
-.nr-todo-label {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.5rem;
-  cursor: default;
-}
-.nr-todo-checkbox {
-  margin-top: 0.35em;
-  accent-color: var(--c-accent);
-}
-.nr-todo-checked {
-  text-decoration: line-through;
-  color: var(--c-text-sub);
+.form-check-input {
+  margin-top: calc((1lh - 1em) / 2);
+  pointer-events: none;
 }
 </style>
