@@ -1,0 +1,24 @@
+{
+  "name": "notion-astro-blog",
+  "type": "module",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "^12.0.0",
+    "@astrojs/vue": "^5.0.0",
+    "@notionhq/client": "^2.2.15",
+    "astro": "^5.0.0",
+    "bootstrap": "5.3",
+    "cheerio": "^1.2.0",
+    "sharp": "^0.34.5",
+    "vue": "^3.5.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  }
+}

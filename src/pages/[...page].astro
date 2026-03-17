@@ -1,0 +1,145 @@
+---
+import type { GetStaticPathsOptions } from "astro";
+import Base from "@/layouts/Base.astro";
+import NotionRenderer from "@/components/NotionRenderer.vue";
+import {
+  getPublishedPostsWithBlocks,
+  getBlocksBeforeDivider,
+} from "@/lib/notion";
+import { enrichBlocksWithOgp } from "@/lib/enrichBlocks";
+
+export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
+  const posts = await getPublishedPostsWithBlocks();
+
+  for (const post of posts) {
+    await enrichBlocksWithOgp(post.blocks);
+  }
+
+  return paginate(posts, { pageSize: 10 });
+}
+
+const { page } = Astro.props;
+
+function formatDate(dateStr: string): string {
+  return new Date(dateStr).toLocaleDateString("ja-JP", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+---
+
+<Base title={page.currentPage === 1 ? "Home" : `Page ${page.currentPage}`}>
+  <section class="posts-list">
+    {
+      page.data.map((post) => {
+        const displayBlocks = getBlocksBeforeDivider(post.blocks);
+        const hasDivider = displayBlocks.length < post.blocks.length;
+        return (
+          <article class="post-entry">
+            <header class="post-entry-header">
+              <h1 class="post-entry-title">
+                <a href={`/posts/${post.meta.id}`}>{post.meta.title}</a>
+              </h1>
+              <div class="post-entry-meta">
+                <time>{formatDate(post.meta.lastEditedAt)}</time>
+              </div>
+            </header>
+            <div class="post-entry-body">
+              <NotionRenderer blocks={displayBlocks} client:load />
+            </div>
+            {hasDivider && (
+              <div class="post-entry-more">
+                <a href={`/posts/${post.meta.id}`}>続きを読む →</a>
+              </div>
+            )}
+            <footer class="post-entry-footer text-body-secondary d-flex gap-2 justify-content-end">
+              <a href={`/posts/${post.meta.id}`} aria-label={`記事「${post.meta.title}」を読む`}>
+                Permalink
+              </a>
+            </footer>
+          </article>
+        );
+      })
+    }
+
+    {page.data.length === 0 && <p>記事がまだありません。</p>}
+  </section>
+
+  {
+    page.lastPage > 1 && (
+      <nav aria-label="ページナビゲーション" class="mt-4">
+        <ul class="pagination justify-content-center">
+          <li class:list={["page-item", { disabled: !page.url.prev }]}>
+            <a class="page-link" href={page.url.prev ?? "#"}>&laquo; 前へ</a>
+          </li>
+
+          {Array.from({ length: page.lastPage }, (_, i) => i + 1).map((num) => (
+            <li class:list={["page-item", { active: num === page.currentPage }]}>
+              <a class="page-link" href={num === 1 ? "/" : `/${num}`}>{num}</a>
+            </li>
+          ))}
+
+          <li class:list={["page-item", { disabled: !page.url.next }]}>
+            <a class="page-link" href={page.url.next ?? "#"}>次へ &raquo;</a>
+          </li>
+        </ul>
+      </nav>
+    )
+  }
+</Base>
+
+<style>
+  .posts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+
+  .post-entry {
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid var(--c-border);
+  }
+  .post-entry:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .post-entry-header {
+    margin-bottom: 1rem;
+  }
+  .post-entry-title {
+    font-size: 2rem;
+    font-weight: bold;
+    line-height: 1.3;
+    margin-bottom: 0.25rem;
+  }
+  .post-entry-title a {
+    color: var(--bs-body-color);
+    text-decoration: none;
+  }
+  .post-entry-title a:hover {
+    color: var(--c-accent);
+  }
+  .post-entry-meta {
+    color: var(--c-text-sub);
+    font-size: 0.95rem;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .post-entry-more {
+    margin-top: 1rem;
+  }
+  .post-entry-more a {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--c-accent);
+  }
+  .post-entry-footer {
+    margin-top: 1rem;
+    font-size: 0.8rem;
+  }
+</style>
