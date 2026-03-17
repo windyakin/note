@@ -38,12 +38,12 @@ function formatDate(dateStr: string): string {
         return (
           <article class="post-entry">
             <header class="post-entry-header">
-              <h1 class="post-entry-title">
-                <a href={`/posts/${post.meta.id}`}>{post.meta.title}</a>
-              </h1>
               <div class="post-entry-meta">
                 <time>{formatDate(post.meta.lastEditedAt)}</time>
               </div>
+              <h1 class="post-entry-title">
+                <a href={`/posts/${post.meta.id}`}>{post.meta.title}</a>
+              </h1>
             </header>
             <div class="post-entry-body">
               <NotionRenderer blocks={displayBlocks} client:load />
