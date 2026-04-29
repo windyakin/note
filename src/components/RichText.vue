@@ -15,18 +15,30 @@ function annotationClasses(annotations: RichText["annotations"]): string[] {
   }
   return cls;
 }
+
+function splitByNewline(text: string): string[] {
+  return text.split("\n");
+}
 </script>
 
 <template>
   <template v-for="(t, i) in texts" :key="i">
     <!-- mention -->
     <template v-if="t.type === 'mention'">
-      <span class="nr-mention">{{ t.plain_text }}</span>
+      <span class="nr-mention">
+        <template v-for="(line, j) in splitByNewline(t.plain_text)" :key="j">
+          <br v-if="j > 0" />{{ line }}
+        </template>
+      </span>
     </template>
 
     <!-- equation -->
     <template v-else-if="t.type === 'equation'">
-      <code class="nr-equation">{{ t.plain_text }}</code>
+      <code class="nr-equation">
+        <template v-for="(line, j) in splitByNewline(t.plain_text)" :key="j">
+          <br v-if="j > 0" />{{ line }}
+        </template>
+      </code>
     </template>
 
     <!-- text (default) -->
@@ -40,14 +52,18 @@ function annotationClasses(annotations: RichText["annotations"]): string[] {
         target="_blank"
         rel="noopener noreferrer"
       >
-        {{ t.plain_text }}
+        <template v-for="(line, j) in splitByNewline(t.plain_text)" :key="j">
+          <br v-if="j > 0" />{{ line }}
+        </template>
       </a>
       <!-- プレーンテキスト or アノテーション付き -->
       <span
         v-else
         :class="annotationClasses(t.annotations)"
       >
-        {{ t.plain_text }}
+        <template v-for="(line, j) in splitByNewline(t.plain_text)" :key="j">
+          <br v-if="j > 0" />{{ line }}
+        </template>
       </span>
     </template>
   </template>
