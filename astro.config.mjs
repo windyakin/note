@@ -25,6 +25,12 @@ export default defineConfig({
         optional: true,
         default: "author",
       }),
+      SITE_COPYRIGHT_YEAR: envField.string({
+        context: "server",
+        access: "public",
+        optional: true,
+        default: String(new Date().getFullYear()),
+      }),
     },
   },
 });

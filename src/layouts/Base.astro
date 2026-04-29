@@ -2,7 +2,7 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "@/styles/global.css";
 import SiteHeader from "@/components/SiteHeader.astro";
-import { siteName, siteDescription } from "@/site";
+import { siteName, siteDescription, author, copyrightYear } from "@/site";
 
 interface Props {
   title: string;
@@ -35,7 +35,7 @@ const ogTitle = title || siteName;
     </main>
 
     <footer class="text-center pt-5 pb-3 text-body-secondary small">
-      <div class="mb-0">&copy; 2006 windyakin</div>
+      <div class="mb-0">&copy; {copyrightYear} {author}</div>
     </footer>
   </body>
 </html>
