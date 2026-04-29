@@ -2,6 +2,7 @@
 import type { GetStaticPathsOptions } from "astro";
 import Base from "@/layouts/Base.astro";
 import NotionRenderer from "@/components/NotionRenderer.vue";
+import PostHeader from "@/components/PostHeader.astro";
 import {
   getPublishedPostsWithBlocks,
   getBlocksBeforeDivider,
@@ -19,17 +20,9 @@ export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
 }
 
 const { page } = Astro.props;
-
-function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString("ja-JP", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-}
 ---
 
-<Base title={page.currentPage === 1 ? "Home" : `Page ${page.currentPage}`}>
+<Base title={page.currentPage === 1 ? "" : `Page ${page.currentPage}`}>
   <section class="posts-list">
     {
       page.data.map((post) => {
@@ -37,22 +30,13 @@ function formatDate(dateStr: string): string {
         const hasDivider = displayBlocks.length < post.blocks.length;
         return (
           <article class="post-entry">
-            <header class="post-entry-header">
-              <div class="post-entry-meta">
-                <time>{formatDate(post.meta.lastEditedAt)}</time>
-              </div>
-              {post.meta.title && (
-                <h1 class="post-entry-title">
-                  <a href={`/posts/${post.meta.id}/`}>{post.meta.title}</a>
-                </h1>
-              )}
-            </header>
+            <PostHeader meta={post.meta} linkTitle />
             <div class="post-entry-body">
               <NotionRenderer blocks={displayBlocks} client:load />
             </div>
             {hasDivider && (
               <div class="post-entry-more">
-                <a href={`/posts/${post.meta.id}`}>続きを読む →</a>
+                <a href={`/posts/${post.meta.id}`} class="post-entry-more-link">続きを読む</a>
               </div>
             )}
             <footer class="post-entry-footer text-body-secondary d-flex gap-2 justify-content-end">
@@ -107,41 +91,19 @@ function formatDate(dateStr: string): string {
     padding-bottom: 0;
   }
 
-  .post-entry-header {
-    margin-bottom: 1rem;
-  }
-  .post-entry-title {
-    font-size: 2rem;
-    font-weight: bold;
-    line-height: 1.3;
-    margin-bottom: 0.25rem;
-  }
-  .post-entry-title a {
-    color: var(--bs-body-color);
-    text-decoration: none;
-  }
-  .post-entry-title a:hover {
-    color: var(--c-accent);
-  }
-  .post-entry-meta {
-    color: var(--c-text-sub);
-    font-size: 0.95rem;
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-
   .post-entry-more {
     margin-top: 1rem;
   }
-  .post-entry-more a {
+  .post-entry-more-link {
     font-size: 0.875rem;
     font-weight: 600;
     color: var(--c-accent);
   }
+  .post-entry-more-link::after {
+    content: " →";
+  }
   .post-entry-footer {
-    margin-top: 1rem;
+    margin-top: 2rem;
     font-size: 0.8rem;
   }
 </style>

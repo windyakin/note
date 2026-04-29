@@ -1,6 +1,8 @@
 ---
 import "bootstrap/dist/css/bootstrap.min.css";
 import "@/styles/global.css";
+import SiteHeader from "@/components/SiteHeader.astro";
+import { siteName, siteDescription } from "@/site";
 
 interface Props {
   title: string;
@@ -9,8 +11,7 @@ interface Props {
   oEmbedUrl?: string;
 }
 
-const { title, description = "note.windyakin.net", ogType = "website", oEmbedUrl } = Astro.props;
-const siteName = "note.windyakin.net";
+const { title, description = siteName, oEmbedUrl } = Astro.props;
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
 const ogTitle = title || siteName;
 ---
@@ -24,25 +25,16 @@ const ogTitle = title || siteName;
     <title>{title ? `${title} | ${siteName}` : siteName}</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href={canonicalUrl} />
-    <meta property="og:title" content={ogTitle} />
-    <meta property="og:description" content={description} />
-    <meta property="og:type" content={ogType} />
-    <meta property="og:url" content={canonicalUrl} />
-    <meta property="og:site_name" content={siteName} />
     {oEmbedUrl && <link rel="alternate" type="application/json+oembed" href={oEmbedUrl} title={ogTitle} />}
   </head>
   <body>
-    <header class="navbar navbar-light bg-white border-bottom">
-      <div class="container" style="max-width: 720px;">
-        <a href="/" class="navbar-brand fw-bold">{siteName}</a>
-      </div>
-    </header>
+    <SiteHeader siteName={siteName} siteDescription={siteDescription} />
 
     <main class="container py-4 pb-5" style="max-width: 720px;">
       <slot />
     </main>
 
-    <footer class="border-top text-center py-3 text-body-secondary small">
+    <footer class="text-center pt-5 pb-3 text-body-secondary small">
       <div class="mb-0">&copy; 2006 windyakin</div>
     </footer>
   </body>

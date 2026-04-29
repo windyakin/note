@@ -1,0 +1,32 @@
+---
+interface Props {
+  siteName: string;
+  siteDescription?: string;
+}
+
+const { siteName, siteDescription } = Astro.props;
+---
+
+<header class="page-header">
+  <div class="container text-center" style="max-width: 720px;">
+    <h1><a href="/" class="text-decoration-none text-dark">{siteName}</a></h1> 
+    {siteDescription && <aside>{siteDescription}</aside>}
+  </div>
+</header>
+
+<style>
+  .page-header {
+    padding: 5rem 0;
+  }
+  .page-header h1 {
+    margin: .67em 0;
+    font-size: 2em;
+    font-weight: 700;
+  }
+  .page-header aside {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.95rem;
+    color: var(--c-text-sub); 
+  }
+</style>

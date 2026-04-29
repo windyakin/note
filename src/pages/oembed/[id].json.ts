@@ -4,6 +4,7 @@ import {
   getPageById,
   extractTextFromBlocks,
 } from "@/lib/notion";
+import { siteName, author } from "@/site";
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const posts = await getPublishedPosts();
@@ -30,9 +31,9 @@ export const GET: APIRoute = async ({ params, site }) => {
     version: "1.0",
     type: "link",
     title,
-    author_name: "windyakin",
+    author_name: author,
     author_url: providerUrl,
-    provider_name: "note.windyakin.net",
+    provider_name: siteName,
     provider_url: providerUrl,
     url: pageUrl,
   };

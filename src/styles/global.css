@@ -23,15 +23,13 @@
 
 body {
   font-family: var(--f-body);
-  line-height: 1.8;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 a {
   color: var(--c-accent);
   text-decoration: none;
 }
+
 a:hover {
   text-decoration: underline;
 }
