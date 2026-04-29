@@ -29,6 +29,7 @@ export type Page = PageObjectResponse;
 export interface PostMeta {
   id: string;
   title: string;
+  firstPublishedAt: string;
   lastEditedAt: string;
 }
 
@@ -40,9 +41,10 @@ export interface PostMeta {
  * 公開済み記事を取得する。
  *
  * Notion DB に以下のプロパティを想定:
- *   - Title     (title)      : 記事タイトル
- *   - Published (checkbox)   : 公開フラグ
- *   - Last edited time       : 最終更新日時（自動）
+ *   - Title              (title)    : 記事タイトル
+ *   - Published          (checkbox) : 公開フラグ
+ *   - First published at (date)     : 公開日（ソートキー）
+ *   - Last edited time              : 最終更新日時（自動）
  */
 export async function getPublishedPosts(): Promise<PostMeta[]> {
   const response = await notion.databases.query({
@@ -51,7 +53,7 @@ export async function getPublishedPosts(): Promise<PostMeta[]> {
       property: "Published",
       checkbox: { equals: true },
     },
-    sorts: [{ timestamp: "last_edited_time", direction: "descending" }],
+    sorts: [{ property: "First published at", direction: "descending" }],
   });
 
   return response.results
@@ -82,7 +84,14 @@ export async function getPublishedPostsWithBlocks(): Promise<
 function pageToMeta(page: PageObjectResponse): PostMeta {
   const props = page.properties;
   const title = extractTitle(props.Title ?? props.Name);
-  return { id: page.id, title, lastEditedAt: page.last_edited_time };
+  const firstPublishedAt =
+    extractDate(props["First published at"]) ?? page.last_edited_time;
+  return {
+    id: page.id,
+    title,
+    firstPublishedAt,
+    lastEditedAt: page.last_edited_time,
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -202,4 +211,12 @@ function extractTitle(prop: unknown): string {
     return (p.title as RichText[]).map((t) => t.plain_text).join("");
   }
   return "";
+}
+
+function extractDate(prop: unknown): string | null {
+  if (!prop || typeof prop !== "object") return null;
+  const p = prop as Record<string, unknown>;
+  if (p.type !== "date" || !p.date || typeof p.date !== "object") return null;
+  const d = p.date as { start?: string };
+  return d.start ?? null;
 }

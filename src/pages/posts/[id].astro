@@ -27,7 +27,7 @@ const title = meta.title || description;
 ---
 
 <Base title={title} description={description} ogType="article" oEmbedUrl={`/oembed/${id}.json`}>
-  <article>
+  <article itemscope itemtype="https://schema.org/BlogPosting">
     <PostHeader meta={meta} />
 
     <NotionRenderer blocks={blocks} client:load />

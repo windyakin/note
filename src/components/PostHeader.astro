@@ -15,20 +15,36 @@ function formatDate(dateStr: string): string {
     day: "numeric",
   });
 }
+
+// 公開日と最終更新日が同じ日付なら更新日は出さない
+const publishedDate = formatDate(meta.firstPublishedAt);
+const lastEditedDate = formatDate(meta.lastEditedAt);
+const showLastEdited = publishedDate !== lastEditedDate;
 ---
 
 <header class="post-header">
-  <div class="post-meta">
-    <time>{formatDate(meta.lastEditedAt)}</time>
-  </div>
+  <dl class="post-meta">
+    <dt class="visually-hidden">公開日</dt>
+    <dd>
+      <time itemprop="datePublished" datetime={meta.firstPublishedAt}>{publishedDate}</time>
+    </dd>
+    {showLastEdited && (
+      <>
+        <dt>最終更新</dt>
+        <dd>
+          <time itemprop="dateModified" datetime={meta.lastEditedAt}>{lastEditedDate}</time>
+        </dd>
+      </>
+    )}
+  </dl>
   {
     meta.title &&
       (linkTitle ? (
-        <h1 class="post-title">
+        <h1 class="post-title" itemprop="headline">
           <a href={`/posts/${meta.id}/`}>{meta.title}</a>
         </h1>
       ) : (
-        <h1 class="post-title">{meta.title}</h1>
+        <h1 class="post-title" itemprop="headline">{meta.title}</h1>
       ))
   }
 </header>
@@ -53,11 +69,16 @@ function formatDate(dateStr: string): string {
   .post-meta {
     color: var(--c-text-sub);
     font-size: 0.95rem;
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-    flex-wrap: wrap;
-    margin-bottom: 0.6rem;
+    margin: 0 0 0.6rem;
+  }
+  .post-meta dt,
+  .post-meta dd {
+    display: inline;
+    margin: 0;
+  }
+  /* 可視ラベルにのみ装飾を適用 (visually-hidden な dt は影響なし) */
+  .post-meta dt:not(.visually-hidden) {
+    margin-inline-start: 0.5rem;
   }
 
   @media (max-width: 576px) {

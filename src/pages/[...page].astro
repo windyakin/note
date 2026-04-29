@@ -29,7 +29,7 @@ const { page } = Astro.props;
         const displayBlocks = getBlocksBeforeDivider(post.blocks);
         const hasDivider = displayBlocks.length < post.blocks.length;
         return (
-          <article class="post-entry">
+          <article class="post-entry" itemscope itemtype="https://schema.org/BlogPosting">
             <PostHeader meta={post.meta} linkTitle />
             <div class="post-entry-body">
               <NotionRenderer blocks={displayBlocks} client:load />
