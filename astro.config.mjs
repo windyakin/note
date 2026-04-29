@@ -1,8 +1,11 @@
 import { defineConfig, envField } from "astro/config";
+import { loadEnv } from "vite";
 import vue from "@astrojs/vue";
 
+const env = loadEnv(process.env.NODE_ENV ?? "", process.cwd(), "");
+
 export default defineConfig({
-  site: "https://your-blog.pages.dev",
+  site: env.SITE_URL ?? "https://your-blog.pages.dev",
   output: "static",
   integrations: [vue()],
   env: {
