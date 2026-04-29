@@ -5,7 +5,10 @@ import type { Block } from "@/lib/notion";
 
 const props = defineProps<{ block: Block }>();
 
-const url: string = (props.block as any).bookmark?.url ?? "";
+const url: string =
+  (props.block as any).bookmark?.url ??
+  (props.block as any).link_preview?.url ??
+  "";
 const ogp = props.block.ogp ?? null;
 </script>
 
@@ -19,11 +22,11 @@ const ogp = props.block.ogp ?? null;
     <div class="row g-0 nr-bookmark-row" :class="ogp?.imageUrl ? 'flex-column-reverse flex-sm-row' : ''">
       <div :class="ogp?.imageUrl ? 'col-12 col-sm-8' : 'col'">
         <div class="card-body d-flex flex-column h-100">
-          <h6 class="card-title nr-bookmark-title mb-1">{{ ogp?.title ?? url }}</h6>
-          <div v-if="ogp?.description" class="card-text nr-bookmark-desc text-body-secondary small mb-1">
+          <h6 class="card-title nr-bookmark-title mb-2">{{ ogp?.title ?? url }}</h6>
+          <div v-if="ogp?.description" class="card-text nr-bookmark-desc text-body-secondary small mb-2">
             {{ ogp.description }}
           </div>
-          <div v-else-if="getCaption(block).length" class="card-text nr-bookmark-desc text-body-secondary small mb-1">
+          <div v-else-if="getCaption(block).length" class="card-text nr-bookmark-desc text-body-secondary small mb-2">
             <RichText :texts="getCaption(block)" />
           </div>
           <div class="card-text d-flex align-items-center gap-1 mb-0 mt-auto nr-bookmark-site">
@@ -71,6 +74,11 @@ const ogp = props.block.ogp ?? null;
   position: relative;
   overflow: hidden;
 }
+.nr-bookmark-cover::before {
+  content: "";
+  display: block;
+  padding-top: 52.5%; /* OGP 標準比率 1200:630 = 52.5% を最低高さとして確保 */
+}
 .nr-bookmark-cover-bg {
   position: absolute;
   inset: 0;
@@ -79,6 +87,7 @@ const ogp = props.block.ogp ?? null;
   object-fit: cover;
   filter: blur(10px);
   transform: scale(1.1);
+  opacity: 0.8;
 }
 .nr-bookmark-title {
   font-size: 0.95rem;
@@ -101,12 +110,16 @@ const ogp = props.block.ogp ?? null;
   white-space: nowrap;
 }
 .nr-bookmark-cover-img {
-  position: relative;
+  position: absolute;
+  top: 50%;
+  left: 0;
   width: 100%;
-  height: 100%;
-  object-fit: contain;
+  aspect-ratio: 1200 / 630;
+  transform: translateY(-50%);
+  object-fit: cover;
+  display: block;
 }
-@media (max-width: 575.98px) {
+@media (max-width: 576px) {
   .nr-bookmark-cover {
     width: 100%;
     max-height: 160px;

@@ -20,8 +20,8 @@ import BlockDivider from "./blocks/BlockDivider.vue";
 import BlockImage from "./blocks/BlockImage.vue";
 import BlockVideo from "./blocks/BlockVideo.vue";
 import BlockBookmark from "./blocks/BlockBookmark.vue";
+
 import BlockEmbed from "./blocks/BlockEmbed.vue";
-import BlockLinkPreview from "./blocks/BlockLinkPreview.vue";
 import BlockTable from "./blocks/BlockTable.vue";
 import BlockColumnList from "./blocks/BlockColumnList.vue";
 import BlockFile from "./blocks/BlockFile.vue";
@@ -83,9 +83,11 @@ function groupBlocks(blocks: Block[]) {
         <BlockDivider v-else-if="block.type === 'divider'" />
         <BlockImage v-else-if="block.type === 'image'" :block="block" />
         <BlockVideo v-else-if="block.type === 'video'" :block="block" />
-        <BlockBookmark v-else-if="block.type === 'bookmark'" :block="block" />
+        <BlockBookmark
+          v-else-if="block.type === 'bookmark' || block.type === 'link_preview'"
+          :block="block"
+        />
         <BlockEmbed v-else-if="block.type === 'embed'" :block="block" />
-        <BlockLinkPreview v-else-if="block.type === 'link_preview'" :block="block" />
         <BlockTable v-else-if="block.type === 'table'" :block="block" />
         <BlockColumnList v-else-if="block.type === 'column_list'" :block="block" />
         <BlockFile v-else-if="['file', 'pdf', 'audio'].includes(block.type)" :block="block" />

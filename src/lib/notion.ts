@@ -43,8 +43,11 @@ export interface PostMeta {
  * Notion DB に以下のプロパティを想定:
  *   - Title              (title)    : 記事タイトル
  *   - Published          (checkbox) : 公開フラグ
- *   - First published at (date)     : 公開日（ソートキー）
+ *   - First published at (date)     : 公開日（未入力なら last_edited_time にフォールバック）
  *   - Last edited time              : 最終更新日時（自動）
+ *
+ * 注: First published at は未公開ページでは空のことがあるため、
+ *     Notion 側でソートせず取得後に firstPublishedAt で降順ソートする。
  */
 export async function getPublishedPosts(): Promise<PostMeta[]> {
   const response = await notion.databases.query({
@@ -53,12 +56,12 @@ export async function getPublishedPosts(): Promise<PostMeta[]> {
       property: "Published",
       checkbox: { equals: true },
     },
-    sorts: [{ property: "First published at", direction: "descending" }],
   });
 
   return response.results
     .filter((p): p is PageObjectResponse => "properties" in p)
-    .map(pageToMeta);
+    .map(pageToMeta)
+    .sort((a, b) => b.firstPublishedAt.localeCompare(a.firstPublishedAt));
 }
 
 /**
