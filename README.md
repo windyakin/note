@@ -71,15 +71,15 @@ npm run preview
 
 ### 4. サイト情報の設定
 
-サイト名 / 説明文 / 著者名は環境変数で上書きできる ([astro.config.mjs](astro.config.mjs))。
+サイト情報は環境変数で上書きできる ([astro.config.mjs](astro.config.mjs))。
 
-環境変数 | デフォルト値
---- | ---
-`SITE_NAME` | `note`
-`SITE_DESCRIPTION` | `Notionをブログのように公開するためのサイト`
-`SITE_AUTHOR` | `author`
-
-[astro.config.mjs](astro.config.mjs) の `site` には公開ドメインを設定する (canonical URL や OGP に使用)。
+環境変数 | デフォルト値 | 用途
+--- | --- | ---
+`SITE_NAME` | `note` | サイト名
+`SITE_DESCRIPTION` | `Notionをブログのように公開するためのサイト` | サイト説明文
+`SITE_AUTHOR` | `author` | 著者名 (フッター / oEmbed の `author_name`)
+`SITE_COPYRIGHT_YEAR` | ビルド実行年 | フッターの著作権表示年
+`SITE_URL` | `https://your-blog.pages.dev` | 公開ドメイン (canonical URL / OGP / oEmbed の URL に使用)
 
 ### 5. Cloudflare Pages へのデプロイ
 
