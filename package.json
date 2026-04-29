@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.0.0",
+    "@astrojs/rss": "^4.0.18",
     "@astrojs/vue": "^5.0.0",
     "@notionhq/client": "^2.2.15",
     "astro": "^5.0.0",

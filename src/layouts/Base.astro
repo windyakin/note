@@ -25,6 +25,7 @@ const ogTitle = title || siteName;
     <title>{title ? `${title} | ${siteName}` : siteName}</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href={canonicalUrl} />
+    <link rel="alternate" type="application/rss+xml" href="/rss.xml" title={siteName} />
     {oEmbedUrl && <link rel="alternate" type="application/json+oembed" href={oEmbedUrl} title={ogTitle} />}
   </head>
   <body>
