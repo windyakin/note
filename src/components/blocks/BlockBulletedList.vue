@@ -21,10 +21,10 @@ defineProps<{ items: Block[] }>();
 <style scoped>
 .nr-list {
   padding-left: 1.5em;
-  margin: 0.25rem 0;
+  margin: 0.5rem 0;
 }
 .nr-li {
-  margin: 2px 0;
+  margin: 0.5rem 0;
 }
 .nr-li :deep(.notion-renderer) {
   margin-top: 2px;

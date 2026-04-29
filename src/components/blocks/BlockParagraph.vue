@@ -14,7 +14,7 @@ defineProps<{ block: Block }>();
 
 <style scoped>
 .nr-paragraph {
-  margin: 0.4rem 0;
+  margin: 0.7rem 0;
   line-height: 1.6;
 }
 .nr-paragraph:empty {
