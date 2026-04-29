@@ -1,0 +1,13 @@
+name = "note-rebuild-trigger"
+main = "src/index.ts"
+compatibility_date = "2026-04-29"
+
+[[kv_namespaces]]
+binding = "NOTE_STATE"
+id = "edf4a9c26b3f433fa7b0f1a5d00af4ca"
+
+[triggers]
+crons = ["*/5 * * * *"]
+
+[observability]
+enabled = true
