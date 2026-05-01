@@ -22,4 +22,8 @@ defineProps<{ block: Block }>();
   padding: 0.25rem 1rem;
   margin: 1rem 0;
 }
+
+.nr-quote :deep(.notion-renderer > :last-child) {
+  margin-bottom: 0;
+}
 </style>
