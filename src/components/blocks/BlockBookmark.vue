@@ -22,7 +22,7 @@ const ogp = props.block.ogp ?? null;
     <div class="row g-0 nr-bookmark-row" :class="ogp?.imageUrl ? 'flex-column-reverse flex-sm-row' : ''">
       <div :class="ogp?.imageUrl ? 'col-12 col-sm-8' : 'col'">
         <div class="card-body d-flex flex-column h-100">
-          <h6 class="card-title nr-bookmark-title mb-2">{{ ogp?.title ?? url }}</h6>
+          <div class="card-title nr-bookmark-title mb-2">{{ ogp?.title ?? url }}</div>
           <div v-if="ogp?.description" class="card-text nr-bookmark-desc text-body-secondary small mb-2">
             {{ ogp.description }}
           </div>
@@ -46,8 +46,11 @@ const ogp = props.block.ogp ?? null;
           </div>
         </div>
       </div>
-      <div v-if="ogp?.imageUrl" class="col-12 col-sm-4 nr-bookmark-cover rounded-end">
-        <img :src="ogp.imageUrl" class="nr-bookmark-cover-bg" aria-hidden="true" />
+      <div
+        v-if="ogp?.imageUrl"
+        class="col-12 col-sm-4 nr-bookmark-cover rounded-end"
+        :style="{ '--nr-bookmark-cover-bg': `url(${JSON.stringify(ogp.imageUrl)})` }"
+      >
         <img
           :src="ogp.imageUrl"
           :alt="ogp.title ?? ''"
@@ -76,18 +79,19 @@ const ogp = props.block.ogp ?? null;
 }
 .nr-bookmark-cover::before {
   content: "";
-  display: block;
-  padding-top: 52.5%; /* OGP 標準比率 1200:630 = 52.5% を最低高さとして確保 */
-}
-.nr-bookmark-cover-bg {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  background-image: var(--nr-bookmark-cover-bg);
+  background-size: cover;
+  background-position: center;
   filter: blur(10px);
   transform: scale(1.1);
   opacity: 0.8;
+}
+.nr-bookmark-cover::after {
+  content: "";
+  display: block;
+  padding-top: 52.5%; /* OGP 標準比率 1200:630 = 52.5% を最低高さとして確保 */
 }
 .nr-bookmark-title {
   font-size: 0.95rem;
