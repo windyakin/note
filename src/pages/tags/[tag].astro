@@ -1,0 +1,101 @@
+---
+import Base from "@/layouts/Base.astro";
+import NotionRenderer from "@/components/NotionRenderer.vue";
+import PostHeader from "@/components/PostHeader.astro";
+import { getPublishedPostsWithBlocks, getBlocksBeforeDivider } from "@/lib/notion";
+import { enrichBlocksWithOgp } from "@/lib/enrichBlocks";
+
+export async function getStaticPaths() {
+  const posts = await getPublishedPostsWithBlocks();
+
+  for (const post of posts) {
+    await enrichBlocksWithOgp(post.blocks);
+  }
+
+  const tagMap = new Map<string, typeof posts>();
+  for (const post of posts) {
+    for (const tag of post.meta.tags) {
+      if (!tagMap.has(tag.name)) tagMap.set(tag.name, []);
+      tagMap.get(tag.name)!.push(post);
+    }
+  }
+
+  return Array.from(tagMap.entries()).map(([tag, tagPosts]) => ({
+    params: { tag },
+    props: { posts: tagPosts },
+  }));
+}
+
+const { tag } = Astro.params;
+const { posts } = Astro.props;
+---
+
+<Base title={tag} robots="noindex,follow">
+  <header class="mb-4">
+    <h1 class="tag-heading fs-2 fw-bold mb-2">タグ「{tag}」の記事</h1>
+    <p class="tag-count">{posts.length}件</p>
+  </header>
+
+  <section class="posts-list">
+    {posts.map((post) => {
+      const displayBlocks = getBlocksBeforeDivider(post.blocks);
+      const hasDivider = displayBlocks.length < post.blocks.length;
+      return (
+        <article class="post-entry" itemscope itemtype="https://schema.org/BlogPosting">
+          <PostHeader meta={post.meta} linkTitle />
+          <div class="post-entry-body">
+            <NotionRenderer blocks={displayBlocks} client:load />
+          </div>
+          {hasDivider && (
+            <div class="post-entry-more">
+              <a href={`/posts/${post.meta.id}`} class="post-entry-more-link">続きを読む</a>
+            </div>
+          )}
+          <footer class="post-entry-footer text-body-secondary d-flex gap-2 justify-content-end">
+            <a href={`/posts/${post.meta.id}/`} aria-label={post.meta.title ? `記事「${post.meta.title}」を読む` : "記事を読む"}>
+              Permalink
+            </a>
+          </footer>
+        </article>
+      );
+    })}
+  </section>
+</Base>
+
+<style>
+  .tag-heading {
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+  }
+  .tag-count {
+    color: var(--c-text-sub);
+  }
+  .posts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+  .post-entry {
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid var(--c-border);
+  }
+  .post-entry:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  .post-entry-more {
+    margin-top: 1rem;
+  }
+  .post-entry-more-link {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--c-accent);
+  }
+  .post-entry-more-link::after {
+    content: " →";
+  }
+  .post-entry-footer {
+    margin-top: 2rem;
+    font-size: 0.8rem;
+  }
+</style>

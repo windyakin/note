@@ -26,11 +26,17 @@ export type Block = BlockObjectResponse & {
 export type RichText = RichTextItemResponse;
 export type Page = PageObjectResponse;
 
+export interface PostTag {
+  name: string;
+  color: string;
+}
+
 export interface PostMeta {
   id: string;
   title: string;
   firstPublishedAt: string;
   lastEditedAt: string;
+  tags: PostTag[];
 }
 
 // ---------------------------------------------------------------------------
@@ -94,6 +100,7 @@ function pageToMeta(page: PageObjectResponse): PostMeta {
     title,
     firstPublishedAt,
     lastEditedAt: page.last_edited_time,
+    tags: extractMultiSelect(props.Tags),
   };
 }
 
@@ -222,4 +229,14 @@ function extractDate(prop: unknown): string | null {
   if (p.type !== "date" || !p.date || typeof p.date !== "object") return null;
   const d = p.date as { start?: string };
   return d.start ?? null;
+}
+
+function extractMultiSelect(prop: unknown): PostTag[] {
+  if (!prop || typeof prop !== "object") return [];
+  const p = prop as Record<string, unknown>;
+  if (p.type !== "multi_select" || !Array.isArray(p.multi_select)) return [];
+  return (p.multi_select as { name: string; color: string }[]).map((item) => ({
+    name: item.name,
+    color: item.color,
+  }));
 }

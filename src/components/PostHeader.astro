@@ -8,6 +8,24 @@ interface Props {
 
 const { meta, linkTitle = false } = Astro.props;
 
+const notionColors: Record<string, { bg: string; text: string }> = {
+  default: { bg: "#e3e2e0", text: "#55534e" },
+  gray:    { bg: "#e3e2e0", text: "#55534e" },
+  brown:   { bg: "#eee0da", text: "#65443c" },
+  orange:  { bg: "#fad9a1", text: "#6e4e2a" },
+  yellow:  { bg: "#fdecc8", text: "#705e35" },
+  green:   { bg: "#dbeddb", text: "#1d6446" },
+  blue:    { bg: "#d3e5ef", text: "#0f4c81" },
+  purple:  { bg: "#e8deee", text: "#5c3a7e" },
+  pink:    { bg: "#f5e0e9", text: "#862e5e" },
+  red:     { bg: "#ffe2dd", text: "#9b2b26" },
+};
+
+function tagStyle(color: string): string {
+  const c = notionColors[color] ?? notionColors.default;
+  return `--tag-text:${c.text};--tag-bg:${c.bg}`;
+}
+
 function formatDate(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString("ja-JP", {
     year: "numeric",
@@ -47,6 +65,13 @@ const showLastEdited = publishedDate !== lastEditedDate;
         <h1 class="post-title" itemprop="headline">{meta.title}</h1>
       ))
   }
+  {meta.tags.length > 0 && (
+    <ul class="post-tags" aria-label="タグ">
+      {meta.tags.map((tag) => (
+        <li><a class="badge post-tag" href={`/tags/${tag.name}/`} style={tagStyle(tag.color)}>{tag.name}</a></li>
+      ))}
+    </ul>
+  )}
 </header>
 
 <style>
@@ -79,6 +104,25 @@ const showLastEdited = publishedDate !== lastEditedDate;
   /* 可視ラベルにのみ装飾を適用 (visually-hidden な dt は影響なし) */
   .post-meta dt:not(.visually-hidden) {
     margin-inline-start: 0.5rem;
+  }
+
+  .post-tags {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .post-tag {
+    font-weight: normal;
+    color: var(--tag-text);
+    background: transparent;
+    border: 1px solid var(--tag-text);
+  }
+  .post-tag:hover {
+    background: var(--tag-bg);
+    text-decoration: none;
   }
 
   @media (max-width: 576px) {
