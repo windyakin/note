@@ -35,7 +35,6 @@ export interface PostMeta {
   id: string;
   title: string;
   firstPublishedAt: string;
-  lastEditedAt: string;
   tags: PostTag[];
 }
 
@@ -50,7 +49,6 @@ export interface PostMeta {
  *   - Title              (title)    : 記事タイトル
  *   - Published          (checkbox) : 公開フラグ
  *   - First published at (date)     : 公開日（未入力なら last_edited_time にフォールバック）
- *   - Last edited time              : 最終更新日時（自動）
  *
  * 注: First published at は未公開ページでは空のことがあるため、
  *     Notion 側でソートせず取得後に firstPublishedAt で降順ソートする。
@@ -99,7 +97,6 @@ function pageToMeta(page: PageObjectResponse): PostMeta {
     id: page.id,
     title,
     firstPublishedAt,
-    lastEditedAt: page.last_edited_time,
     tags: extractMultiSelect(props.Tags),
   };
 }
