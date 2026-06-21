@@ -1,5 +1,6 @@
 ---
 import type { PostMeta } from "@/lib/notion";
+import { t, dateLocale } from "@/i18n";
 
 interface Props {
   meta: PostMeta;
@@ -27,7 +28,7 @@ function tagStyle(color: string): string {
 }
 
 function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString("ja-JP", {
+  return new Date(dateStr).toLocaleDateString(dateLocale, {
     year: "numeric",
     month: "long",
     day: "numeric",
@@ -39,7 +40,7 @@ const publishedDate = formatDate(meta.firstPublishedAt);
 
 <header class="post-header">
   <dl class="post-meta">
-    <dt class="visually-hidden">公開日</dt>
+    <dt class="visually-hidden">{t("publishedDate")}</dt>
     <dd>
       <time itemprop="datePublished" datetime={meta.firstPublishedAt}>{publishedDate}</time>
     </dd>
@@ -55,7 +56,7 @@ const publishedDate = formatDate(meta.firstPublishedAt);
       ))
   }
   {meta.tags.length > 0 && (
-    <ul class="post-tags" aria-label="タグ">
+    <ul class="post-tags" aria-label={t("tags")}>
       {meta.tags.map((tag) => (
         <li><a class="badge post-tag" href={`/tags/${tag.name}/`} style={tagStyle(tag.color)}>{tag.name}</a></li>
       ))}

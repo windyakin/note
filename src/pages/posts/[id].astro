@@ -6,6 +6,7 @@ import { getPublishedPostsWithBlocks, getPageById, extractTextFromBlocks, extrac
 import { enrichBlocksWithOgp, resolveInternalLinks, collectBacklinks } from "@/lib/enrichBlocks";
 import type { BacklinkEntry } from "@/lib/enrichBlocks";
 import type { PostMeta } from "@/lib/notion";
+import { t, dateLocale } from "@/i18n";
 
 export async function getStaticPaths() {
   const postsWithBlocks = await getPublishedPostsWithBlocks();
@@ -36,7 +37,7 @@ await enrichBlocksWithOgp(blocks);
 await resolveInternalLinks(blocks, allPosts);
 
 function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString("ja-JP", {
+  return new Date(dateStr).toLocaleDateString(dateLocale, {
     year: "numeric", month: "long", day: "numeric",
   });
 }
@@ -55,7 +56,7 @@ const ogImage = extractFirstImageUrl(blocks);
 
   {backlinks.length > 0 && (
     <aside class="backlinks">
-      <h2 class="backlinks-title">この記事にリンクしている記事</h2>
+      <h2 class="backlinks-title">{t("backlinkTitle")}</h2>
       <ul class="backlinks-list">
         {backlinks.map((post) => (
           <li>

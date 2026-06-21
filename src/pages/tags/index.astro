@@ -1,6 +1,7 @@
 ---
 import Base from "@/layouts/Base.astro";
 import { getPublishedPosts } from "@/lib/notion";
+import { t, dateLocale } from "@/i18n";
 
 const posts = await getPublishedPosts();
 
@@ -18,7 +19,7 @@ for (const post of posts) {
 
 const tags = Array.from(tagMap.entries())
   .map(([name, { count, color }]) => ({ name, count, color }))
-  .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, "ja"));
+  .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, dateLocale));
 
 const notionColors: Record<string, string> = {
   default: "#9c9a96",
@@ -38,14 +39,14 @@ function tagStyle(color: string): string {
 }
 ---
 
-<Base title="タグ一覧">
+<Base title={t("tagList")}>
   <header class="mb-4">
-    <h1 class="tag-cloud-heading fs-2 fw-bold mb-2">タグ一覧</h1>
-    <p class="tag-cloud-count">{tags.length}件のタグ</p>
+    <h1 class="tag-cloud-heading fs-2 fw-bold mb-2">{t("tagList")}</h1>
+    <p class="tag-cloud-count">{t("tagCount", { count: tags.length })}</p>
   </header>
 
   {tags.length > 0 ? (
-    <ul class="tag-cloud" aria-label="タグ一覧">
+    <ul class="tag-cloud" aria-label={t("tagList")}>
       {tags.map((tag) => (
         <li>
           <a
@@ -60,7 +61,7 @@ function tagStyle(color: string): string {
       ))}
     </ul>
   ) : (
-    <p>タグがまだありません。</p>
+    <p>{t("noTags")}</p>
   )}
 </Base>
 

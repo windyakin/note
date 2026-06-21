@@ -1,4 +1,6 @@
 ---
+import { t } from "@/i18n";
+
 interface Props {
   author: string;
   copyrightYear: string | number;
@@ -10,8 +12,8 @@ const { author, copyrightYear, showNav = false } = Astro.props;
 
 <footer class="text-center my-5 py-3 text-body-secondary small">
   {showNav && (
-    <nav class="site-footer-nav mb-3" aria-label="サイトナビゲーション">
-      <a href="/tags/">タグ一覧</a>
+    <nav class="site-footer-nav mb-3" aria-label={t("siteNavigation")}>
+      <a href="/tags/">{t("tagList")}</a>
       <a href="/rss.xml">RSS Feed</a>
     </nav>
   )}
