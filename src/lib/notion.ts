@@ -22,6 +22,8 @@ export type Block = BlockObjectResponse & {
   ogp?: OgpMeta;
   /** ビルド時にダウンロードされたローカル画像パス */
   localImageUrl?: string;
+  /** OGP 用 JPEG 画像パス (WebP 非対応クローラー向け) */
+  ogpImageUrl?: string;
   /** 内部リンク先URL（同一DB内のページへのリンク） */
   _internalUrl?: string;
 };
@@ -253,6 +255,23 @@ export function extractFirstImageUrl(blocks: Block[]): string | null {
     }
     if (block.children) {
       const found = extractFirstImageUrl(block.children);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+
+export function extractFirstOgpImageUrl(blocks: Block[]): string | null {
+  for (const block of blocks) {
+    if (block.type === "image") {
+      if (block.ogpImageUrl) return block.ogpImageUrl;
+      if (block.localImageUrl) return block.localImageUrl;
+      const data = (block as Record<string, any>).image;
+      if (data?.type === "external") return data.external?.url ?? null;
+      if (data?.type === "file") return data.file?.url ?? null;
+    }
+    if (block.children) {
+      const found = extractFirstOgpImageUrl(block.children);
       if (found) return found;
     }
   }
