@@ -10,6 +10,13 @@ export default defineConfig({
   integrations: [vue()],
   env: {
     schema: {
+      SITE_LANG: envField.enum({
+        values: ["en", "ja", "zh-TW"],
+        context: "server",
+        access: "public",
+        optional: true,
+        default: "en",
+      }),
       SITE_NAME: envField.string({
         context: "server",
         access: "public",

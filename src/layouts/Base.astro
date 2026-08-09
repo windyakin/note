@@ -5,6 +5,7 @@ import "@/styles/global.css";
 import SiteHeader from "@/components/SiteHeader.astro";
 import SiteFooter from "@/components/SiteFooter.astro";
 import { siteName, siteDescription, author, copyrightYear } from "@/site";
+import { htmlLang } from "@/i18n";
 
 interface Props {
   title: string;
@@ -23,7 +24,7 @@ const ogImageUrl = ogImage ? new URL(ogImage, Astro.site).href : undefined;
 ---
 
 <!doctype html>
-<html lang="ja">
+<html lang={htmlLang}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />

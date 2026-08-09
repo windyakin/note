@@ -4,6 +4,7 @@ import NotionRenderer from "@/components/NotionRenderer.vue";
 import PostHeader from "@/components/PostHeader.astro";
 import { getPublishedPostsWithBlocks, getBlocksBeforeDivider } from "@/lib/notion";
 import { enrichBlocksWithOgp } from "@/lib/enrichBlocks";
+import { t } from "@/i18n";
 
 export async function getStaticPaths() {
   const posts = await getPublishedPostsWithBlocks();
@@ -32,8 +33,8 @@ const { posts } = Astro.props;
 
 <Base title={tag} robots="noindex,follow">
   <header class="mb-4">
-    <h1 class="tag-heading fs-2 fw-bold mb-2">タグ「{tag}」の記事</h1>
-    <p class="tag-count">{posts.length}件</p>
+    <h1 class="tag-heading fs-2 fw-bold mb-2">{t("tagArticles", { tag })}</h1>
+    <p class="tag-count">{t("itemCount", { count: posts.length })}</p>
   </header>
 
   <section class="posts-list">
@@ -48,11 +49,11 @@ const { posts } = Astro.props;
           </div>
           {hasDivider && (
             <div class="post-entry-more">
-              <a href={`/posts/${post.meta.id}`} class="post-entry-more-link">続きを読む</a>
+              <a href={`/posts/${post.meta.id}`} class="post-entry-more-link">{t("readMore")}</a>
             </div>
           )}
           <footer class="post-entry-footer text-body-secondary d-flex gap-2 justify-content-end">
-            <a href={`/posts/${post.meta.id}/`} aria-label={post.meta.title ? `記事「${post.meta.title}」を読む` : "記事を読む"}>
+            <a href={`/posts/${post.meta.id}/`} aria-label={post.meta.title ? t("readArticle", { title: post.meta.title }) : t("readArticleFallback")}>
               Permalink
             </a>
           </footer>
