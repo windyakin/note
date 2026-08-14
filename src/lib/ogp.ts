@@ -364,3 +364,24 @@ export async function downloadNotionImage(
   }
 }
 
+// ---------------------------------------------------------------------------
+// OGP 用 JPEG 画像ダウンロード
+// WebP を認識しないクローラー向けに JPEG で提供する
+// ---------------------------------------------------------------------------
+
+export async function downloadNotionImageForOgp(
+  imageUrl: string,
+): Promise<string | null> {
+  try {
+    return await downloadAndSaveImage({
+      url: imageUrl,
+      objectKey: `notion-images/${hashUrl(imageUrl)}-ogp.jpg`,
+      transform: (s) =>
+        s.resize(1200, 630, { fit: "inside", withoutEnlargement: true })
+          .jpeg({ quality: 80 }),
+    });
+  } catch {
+    return null;
+  }
+}
+

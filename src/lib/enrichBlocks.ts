@@ -1,7 +1,7 @@
 import { getBlocks, getPageById, extractFirstImageUrl, extractTextFromBlocks, resolveDisplayTitle, TITLE_MAX_LENGTH } from "./notion";
 import type { Block, PostMeta, RichText } from "./notion";
 import { SITE_NAME } from "astro:env/server";
-import { fetchOgpMeta, downloadOgpImage, downloadFavicon, downloadNotionImage } from "./ogp";
+import { fetchOgpMeta, downloadOgpImage, downloadFavicon, downloadNotionImage, downloadNotionImageForOgp } from "./ogp";
 import { readMetaCache, writeMetaCache } from "./ogpMetaCache";
 
 const CONCURRENCY_LIMIT = 5;
@@ -41,9 +41,15 @@ export async function enrichBlocksWithOgp(blocks: Block[]): Promise<Block[]> {
       await writeMetaCache(meta);
       task.block.ogp = meta;
     } else {
-      const localPath = await downloadNotionImage(task.url);
+      const [localPath, ogpPath] = await Promise.all([
+        downloadNotionImage(task.url),
+        downloadNotionImageForOgp(task.url),
+      ]);
       if (localPath) {
         task.block.localImageUrl = localPath;
+      }
+      if (ogpPath) {
+        task.block.ogpImageUrl = ogpPath;
       }
     }
   });

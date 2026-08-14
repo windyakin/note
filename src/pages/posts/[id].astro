@@ -2,7 +2,7 @@
 import Base from "@/layouts/Base.astro";
 import NotionRenderer from "@/components/NotionRenderer.vue";
 import PostHeader from "@/components/PostHeader.astro";
-import { getPublishedPostsWithBlocks, getPageById, extractTextFromBlocks, extractFirstImageUrl, resolveDisplayTitle } from "@/lib/notion";
+import { getPublishedPostsWithBlocks, getPageById, extractTextFromBlocks, extractFirstOgpImageUrl, resolveDisplayTitle } from "@/lib/notion";
 import { enrichBlocksWithOgp, resolveInternalLinks, collectBacklinks } from "@/lib/enrichBlocks";
 import type { BacklinkEntry } from "@/lib/enrichBlocks";
 import type { PostMeta } from "@/lib/notion";
@@ -44,7 +44,7 @@ function formatDate(dateStr: string): string {
 
 const description = extractTextFromBlocks(blocks);
 const title = resolveDisplayTitle(meta, blocks);
-const ogImage = extractFirstImageUrl(blocks);
+const ogImage = extractFirstOgpImageUrl(blocks);
 ---
 
 <Base title={title} description={description} ogType="article" ogImage={ogImage ?? undefined} oEmbedUrl={`/oembed/${id}.json`}>
