@@ -15,6 +15,7 @@
 - **Notion ブロック構造をそのままレンダリング** — Markdown 変換を挟まず、Notion API のブロックデータを Vue コンポーネントで再帰的に描画する
 - **ビルド時に外部リソースをローカル化** — bookmark / link_preview の OGP 取得、Notion 画像と OGP 画像のダウンロード ([src/lib/enrichBlocks.ts](src/lib/enrichBlocks.ts))
 - **oEmbed エンドポイント** — 各記事の埋め込みメタデータを `/oembed/<id>.json` で配信
+- **サイトマップ自動生成** — [@astrojs/sitemap](https://docs.astro.build/en/guides/integrations-guide/sitemap/) により `/sitemap-index.xml` を生成し、`/robots.txt` から参照 (noindex なタグ詳細ページや JSON/Markdown エンドポイントは除外)
 - **自動ビルドトリガー** — Notion DB の変更を検知して Cloudflare Pages のビルドを叩く Cloudflare Worker を同梱 ([worker/](worker/))
 
 ---
@@ -128,7 +129,8 @@ note/
 │   ├── pages/
 │   │   ├── [...page].astro     # 記事一覧 (10 件ごとページネーション)
 │   │   ├── posts/[id].astro    # 記事詳細 (Notion page id をそのまま URL に使用)
-│   │   └── oembed/[id].json.ts # oEmbed エンドポイント
+│   │   ├── oembed/[id].json.ts # oEmbed エンドポイント
+│   │   └── robots.txt.ts       # robots.txt (sitemap-index.xml への参照を含む)
 │   └── styles/
 │       └── global.css          # グローバルスタイル (Bootstrap 5.3 ベース)
 └── worker/                     # 自動ビルドトリガー用 Cloudflare Worker
